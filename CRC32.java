@@ -31,7 +31,7 @@ public class CRC32 {
         int calculatedCRC = crc32(messageBytes);
 
         if (calculatedCRC == Integer.parseUnsignedInt(crc, 2)) {
-            System.out.println("El mensaje recibido es correcto.");
+            System.out.println("El mensaje recibido es correcto. Mensaje: " + binaryToText(message));
         } else {
             System.out.println("El mensaje recibido es incorrecto: Se detectaron errores.");
         }
@@ -50,6 +50,15 @@ public class CRC32 {
             }
         }
         return crc ^ CRC;
+    }
+
+    private static String binaryToText(String binary) {
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < binary.length(); i += 8) {
+            int charCode = Integer.parseInt(binary.substring(i, i + 8), 2);
+            text.append((char) charCode);
+        }
+        return text.toString();
     }
     
 }
