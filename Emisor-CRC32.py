@@ -9,6 +9,9 @@ Integrantes:
  - Sebastián Solorzano
 '''
 
+def convertBinary(message):
+    return ''.join(format(ord(i), '08b') for i in message)
+
 def crc32(bytes):
     poly = 0xEDB88320
     crc = 0xFFFFFFFF
@@ -25,7 +28,8 @@ def crc32(bytes):
 
 def main():
     message = input("Ingrese el mensaje a enviar: ")
-    message_bytes = int(message, 2).to_bytes((len(message) + 7) // 8, byteorder='big')
+    message_binary = convertBinary(message)
+    message_bytes = int(message_binary, 2).to_bytes((len(message_binary) + 7) // 8, byteorder='big')
 
     # Calculo del CRC32
     crc = crc32(message_bytes)
@@ -34,8 +38,9 @@ def main():
     crc_binnary = format(crc, '032b')
 
     print(f"Mensaje original: {message}")
+    print(f"Mensaje en binario: {message_binary}")
     print(f"CRC32: {crc_binnary}")
-    print(f"Mensaje con CRC32: {message + crc_binnary}")
+    print(f"Mensaje con CRC32: {message_binary + crc_binnary}")
 
 if __name__ == "__main__":
     main()
