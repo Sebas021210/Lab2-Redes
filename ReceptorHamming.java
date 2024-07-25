@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class ReceptorHamming {
-
+    // Se verifican los valores de los bits de pariedad
     public static int calcularParidad(int[] bits, int[] posiciones) {
         int conteo = 0;
         for (int pos : posiciones) {
@@ -11,7 +11,7 @@ public class ReceptorHamming {
         }
         return conteo % 2;
     }
-
+    // Se decodifican los valores usando el metodo inverso de Hamming
     public static String decodificarHamming(String mensajeCodificado) {
         int[] bits = mensajeCodificado.chars().map(c -> c - '0').toArray();
         int[] posicionesP1 = {1, 3, 5, 7, 9, 11};
@@ -31,17 +31,17 @@ public class ReceptorHamming {
         }
         return "No se detectaron errores. Mensaje original: " + extraerMensaje(bits);
     }
-
+    // Se extrae el mensaje en binario y se convierte a ASCII
     public static String extraerMensaje(int[] bits) {
         String binario = "" + bits[2] + bits[4] + bits[5] + bits[6] + bits[8] + bits[9] + bits[10];
         return "Mensaje binario: " + binario + ", Carácter ASCII: " + binarioAAscii(binario);
     }
-
+    // Se convierte el binario a ASCII
     public static char binarioAAscii(String binario) {
         int valorDecimal = Integer.parseInt(binario, 2);
         return (char) valorDecimal;
     }
-
+    // Se recibe el mensaje codificado y se verifica si es de 11 bits
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Ingrese un caracter codificado de 11 bits: ");
