@@ -15,10 +15,10 @@ def codificar_hamming(mensaje):
     bits = list(mensaje)
     
     # Calcular los bits de paridad
-    p1 = Pariedad(bits, [1, 3, 5, 7])
-    p2 = Pariedad(bits, [2, 3, 6, 7])
-    p3 = Pariedad(bits, [4, 5, 6, 7])
-    p4 = Pariedad(bits, [0, 1, 2, 3, 4, 5, 6, 7])
+    p1 = Pariedad(bits, [1, 2, 4, 5, 7])
+    p2 = Pariedad(bits, [1, 3, 4, 6, 7])
+    p3 = Pariedad(bits, [2, 3, 4])
+    p4 = Pariedad(bits, [5, 6, 7])
     
     # Se insertan los bits de paridad
     mensaje_final = p1 + p2 + bits[0] + p3 + ''.join(bits[1:4]) + p4 + ''.join(bits[4:7])
