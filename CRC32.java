@@ -17,6 +17,7 @@ public class CRC32 {
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(12347)) {
+            serverSocket.setReuseAddress(true);
             System.out.println("\nEsperando conexión...");
             while (true){
                 Socket socket = serverSocket.accept();
@@ -50,8 +51,12 @@ public class CRC32 {
                     System.out.println("Enviando resultado...");
                     out.println(resultado);
                 }
+
+                in.close();
+                socket.close();
+                Thread.sleep(100);
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

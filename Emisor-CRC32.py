@@ -10,6 +10,7 @@ Integrantes:
 
 import random
 import socket
+import time
 
 def convertBinary(message):
     return ''.join(format(ord(i), '08b') for i in message)
@@ -34,7 +35,7 @@ def calcular_integridad(binary_message):
     crc_binary = format(crc, '032b')
     return binary_message + crc_binary
 
-def ruido(binary_message, probabilidad_error=0.005):
+def ruido(binary_message, probabilidad_error=0.007):
     noisy_message = ""
     for bit in binary_message:
         if random.random() < probabilidad_error:
@@ -45,6 +46,7 @@ def ruido(binary_message, probabilidad_error=0.005):
 
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('localhost', 12346))
         s.listen()
         print("Esperando conexión...")
@@ -60,10 +62,16 @@ def main():
                 message_noisy = ruido(message_with_crc)
 
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_receptor:
-                    s_receptor.connect(('localhost', 12347))
-                    s_receptor.sendall(message_noisy.encode())
-                    print(f"Mensaje CRC32: {message_with_crc}")
-                    print(f"Mensaje enviado: {message_noisy}")
+                    try:
+                        s_receptor.connect(('localhost', 12347))
+                        s_receptor.sendall(message_noisy.encode())
+                        print(f"Mensaje CRC32: {message_with_crc}")
+                        print(f"Mensaje enviado: {message_noisy}")
+                    except socket.error as e:
+                        print(f"Error al conectar con el receptor: {e}")
+                        continue
+
+                time.sleep(0.1)
 
 if __name__ == "__main__":
     main()
