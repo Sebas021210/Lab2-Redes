@@ -9,6 +9,7 @@ Integrantes:
 '''
 
 import socket
+import base64
 
 def solicitar_mensaje():
     return input("Ingrese el mensaje a enviar: ")
@@ -25,8 +26,14 @@ def recibir_resultado():
         s.listen()
         conn, addr = s.accept()
         with conn:
-            resultado = conn.recv(1024).decode()
-            return resultado
+            resultado = conn.recv(1024).decode('utf-8')  # Recibir como UTF-8
+
+            try:
+                resultado_decodificado = base64.b64decode(resultado).decode('utf-8')
+            except Exception as e:
+                resultado_decodificado = resultado
+
+            return resultado_decodificado
 
 def main():
     while True: 
