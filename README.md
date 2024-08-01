@@ -12,37 +12,55 @@ Para la implementación del algoritmo de corrección de errores, se utilizó el 
 Para la implementación del algoritmo de detección de errores, se utilizó CRC-32, donde el emisor fue desarrollado en Python y el receptor en Java. Esta elección permitió aprovechar la eficiencia de CRC-32 en la detección de errores durante la transmisión de datos. Python se utilizó para calcular el CRC-32 y adjuntar el valor al mensaje original, mientras que Java se utilizó para verificar la integridad del mensaje recibido.
 
 ## Uso
-### Emisor y Receptor CRC-32
-1. Ejecutar el emisor en Python:
-    ```bash
-    python Emisor-CRC32.py
-    ```
-2. Proporcionar el mensaje en texto a enviar cuando se solicite.
-3. Ejecutar el receptor en Java:
+### Arquitectura de capas
+1. Ejecutar los receptores en Java:
     ```bash
     java CRC32
     ```
-4. Ingresar el mensaje recibido con CRC-32 cuando se solicite.
-
-### Emisor y Receptor Hamming
-1. Ejecutar el emisor en Python:
-    ```bash
-    python Emisor-Hamming.py
-    ```
-2. Proporcionar el mensaje en binario a enviar cuando se solicite.
-3. Ejecutar el receptor en Java:
     ```bash
     java ReceptorHamming
     ```
-4. Ingresar el mensaje recibido cuando se solicite.
+2. Ejecutar los emisores en Python:
+    ```bash
+    python Emisor-CRC32.py
+    ```
+    ```bash
+    python Emisor-Hamming.py
+    ```
+3. Ejecutar Main:
+   ```bash
+   python Main.py
+   ```
+5. Proporcionar el mensaje en texto a enviar cuando se solicite.
+6. Seleccionar el algoritmo a utilizar.
+
+### Pruebas
+1. Ejecutar el receptor para la prueba en Java:
+    ```bash
+    java CRC32
+    ```
+    ```bash
+    java Emisor-Hamming
+    ```
+2. Ejecutar el receptor para la prueba en Python:
+    ```bash
+    python Emisor-CRC32.py
+    ```
+    ```bash
+    python Emisor-Hamming.py
+    ```
+3. Ejecutar Prueba:
+   ```bash
+   python Prueba.py
+   ```
+
+### Análisis
+1. Asegurarse de tener el archivo .json creado después de la prueba
+2. Ejecutar Análisis
+   ```bash
+   python Analisis.py
+   ```
 
 ## Ejemplos de Entrada y Salida
-### CRC-32
 - **Entrada:** hola
-- **Salida Emisor:** Mensaje con CRC32: 0110100001101111011011000110000101101111101000001111100110001000
-- **Salida Receptor:** El mensaje recibido es correcto. Mensaje: hola
-### Hamming
-- **Entrada:** 0100001
-- **Salida Emisor:** Mensaje codificado: 10011001001
-- **Salida Receptor:** No se detectaron errores. Mensaje original: Mensaje binario: 1100001, Caracter ASCII: a
-
+- **Salida:** El mensaje recibido es correcto. Mensaje: hola
