@@ -7,8 +7,8 @@ def cargar_resultados(filepath='resultados.json'):
         return json.load(f)
 
 def analizar_resultados(resultados):
-    exitos = sum(1 for r in resultados if "correcto" in r['resultado'])
-    errores = len(resultados) - exitos
+    exitos = sum(1 for r in resultados if "El mensaje recibido es correcto" in r['resultado'])
+    errores = sum(1 for r in resultados if "El mensaje recibido es incorrecto" in r['resultado'])
     tasa_exito = exitos / len(resultados)
     
     print(f"Total de mensajes: {len(resultados)}")
@@ -20,8 +20,8 @@ def analizar_resultados(resultados):
 
 def graficar_resultados(resultados):
     longitudes = [r['longitud'] for r in resultados]
-    exitos = ["Correcto" if "correcto" in r['resultado'] else "Error" for r in resultados]
-    
+    exitos = ["Correcto" if "El mensaje recibido es correcto" in r['resultado'] else "Error" for r in resultados]
+
     plt.figure(figsize=(10, 6))
     sns.histplot(data=longitudes, kde=True, bins=30)
     plt.title('Distribución de Longitudes de Mensajes')
@@ -34,6 +34,15 @@ def graficar_resultados(resultados):
     plt.title('Resultados de Transmisión de Mensajes')
     plt.xlabel('Resultado')
     plt.ylabel('Frecuencia')
+    plt.show()
+
+    longitudes_unicas = list(set(longitudes))
+    tasa_exito_por_longitud = [sum(1 for r in resultados if r['longitud'] == l and "El mensaje recibido es correcto" in r['resultado']) / sum(1 for r in resultados if r['longitud'] == l) for l in longitudes_unicas]    
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=longitudes_unicas, y=tasa_exito_por_longitud)
+    plt.title('Tasa de Éxito vs. Longitud de los Mensajes')
+    plt.xlabel('Longitud del Mensaje')
+    plt.ylabel('Tasa de Éxito')
     plt.show()
 
 def main():
