@@ -34,7 +34,7 @@ public class ReceptorHamming {
         
         if (posicionError != 0 && posicionError <= 11) {
             bits[posicionError - 1] = 1 - bits[posicionError - 1]; 
-            return "Error corregido en la posición: " + posicionError + ". " + extraerMensaje(bits);
+            return "Error corregido en la posicion: " + posicionError + ". " + extraerMensaje(bits);
         }
         return "No se detectaron errores. " + extraerMensaje(bits);
     }
