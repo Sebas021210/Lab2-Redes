@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.Base64;
 
 public class ReceptorHamming {
 
@@ -17,6 +17,8 @@ public class ReceptorHamming {
 
     public static String decodificarHamming(String mensajeCodificado) {
         int[] bits = mensajeCodificado.chars().map(c -> c - '0').toArray();
+        System.out.println("Decodificando el mensaje: " + mensajeCodificado);
+
         int[] posicionesP1 = {1, 3, 5, 7, 9, 11};
         int[] posicionesP2 = {2, 3, 6, 7, 10, 11};
         int[] posicionesP3 = {4, 5, 6, 7};
@@ -28,11 +30,12 @@ public class ReceptorHamming {
         int p4 = calcularParidad(bits, posicionesP4);
 
         int posicionError = p1 * 1 + p2 * 2 + p3 * 4 + p4 * 8;
+
         if (posicionError != 0) {
             bits[posicionError - 1] = 1 - bits[posicionError - 1];
-            return "Error corregido en la posición: " + posicionError + ". Mensaje corregido: " + extraerMensaje(bits);
+            return "Error corregido en la posición: " + posicionError + ". " + extraerMensaje(bits);
         }
-        return "No se detectaron errores. Mensaje original: " + extraerMensaje(bits);
+        return "No se detectaron errores. " + extraerMensaje(bits);
     }
 
     public static String extraerMensaje(int[] bits) {
@@ -45,23 +48,32 @@ public class ReceptorHamming {
         return (char) valorDecimal;
     }
 
-    public static void main(String[] args) {
-        int port = 12347;
+     public static void main(String[] args) {
+        int port = 12349;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Receptor Hamming escuchando en el puerto " + port);
+            System.out.println("Receptor Hamming listo y escuchando en el puerto " + port);
 
             while (true) {
                 try (Socket clientSocket = serverSocket.accept();
-                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
-
+                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+                     
+                    System.out.println("Conexión aceptada desde " + clientSocket.getRemoteSocketAddress());
                     String mensajeCodificado = in.readLine();
-                    
+                    System.out.println("Mensaje recibido: '" + mensajeCodificado + "'");
+
                     if (mensajeCodificado == null || mensajeCodificado.length() != 11 || !mensajeCodificado.matches("[01]+")) {
-                        out.println("Error: El mensaje debe ser de 11 bits.");
+                        System.out.println("Rechazo por formato inválido.");
                     } else {
+                        System.out.println("Procesando mensaje...");
                         String resultado = decodificarHamming(mensajeCodificado);
-                        out.println(resultado);
+                        String encodedResult = Base64.getEncoder().encodeToString(resultado.getBytes("UTF-8"));
+                        
+                        // Envío directo al main.py en el puerto 12348
+                        try (Socket mainSocket = new Socket("localhost", 12348);
+                             PrintWriter out = new PrintWriter(mainSocket.getOutputStream(), true)) {
+                            out.println(encodedResult);
+                            System.out.println("Resultado codificado y enviado directamente a main.py: " + encodedResult);
+                        }
                     }
                 } catch (IOException e) {
                     System.out.println("Error en la conexión con el cliente: " + e.getMessage());

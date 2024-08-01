@@ -1,5 +1,6 @@
 import socket
 import random
+import base64
 
 def Pariedad(bits, posiciones):
     conteo = 0
@@ -31,29 +32,39 @@ def aplicar_ruido(mensaje_codificado, probabilidad_error=0.05):
 def main():
     host = 'localhost'
     port = 12345
-    receptor_port = 12347  # Port for Java Receptor
+    receptor_port = 12349  # Puerto para el Receptor Java
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as servidor:
         servidor.bind((host, port))
         servidor.listen()
-        print("Emisor Hamming escuchando en {}:{}".format(host, port))
+        print(f"Emisor Hamming escuchando en {host}:{port}")
 
         while True:
             conn, addr = servidor.accept()
+            print(f"Conexión aceptada desde {addr}")
             with conn:
                 while True:
                     data = conn.recv(1024)
                     if not data:
+                        print("No se recibieron datos. Cerrando conexión.")
                         break
-                    mensaje = data.decode()
+                    try:
+                        mensaje = data.decode('utf-8')
+                        print(f"Mensaje recibido: {mensaje}")
+                    except UnicodeDecodeError as e:
+                        print(f"Error al decodificar: {e}")
+                        print("Datos recibidos:", data)
+                        continue  # Continuar con la siguiente iteración
+
                     mensaje_codificado = codificar_hamming(mensaje)
+                    print(f"Mensaje codificado: {mensaje_codificado}")
+
                     mensaje_con_ruido = aplicar_ruido(mensaje_codificado)
+                    print(f"Mensaje con ruido: {mensaje_con_ruido}")
 
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_receptor:
                         s_receptor.connect((host, receptor_port))
-                        s_receptor.sendall(mensaje_con_ruido.encode())
-                        resultado = s_receptor.recv(1024).decode()
-                        conn.sendall(resultado.encode())
+                        s_receptor.sendall((mensaje_con_ruido + "\n").encode('utf-8'))
 
 if __name__ == "__main__":
     main()
