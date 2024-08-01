@@ -13,6 +13,12 @@ import socket
 def solicitar_mensaje():
     return input("Ingrese el mensaje a enviar: ")
 
+def algoritmo():
+    opcion = input("Ingrese el algoritmo a utilizar (1 - Hamming, 2 - CRC32): ")
+    while opcion not in ['1', '2']:
+        opcion = input("Opción inválida. Ingrese el algoritmo a utilizar (1 - Hamming, 2 - CRC32): ")
+    return opcion
+
 def recibir_resultado():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(('localhost', 12348))
@@ -23,14 +29,24 @@ def recibir_resultado():
             return resultado
 
 def main():
-    message = solicitar_mensaje()
+    while True: 
+        message = solicitar_mensaje()
+        algoritmo_elegido = algoritmo()
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_emisor:
-        s_emisor.connect(('localhost', 12346))
-        s_emisor.sendall(message.encode())
-    
-    resultado = recibir_resultado()
-    print(f"Resultado recibido: {resultado}")
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s_emisor:
+            if algoritmo_elegido == '1':
+                s_emisor.connect(('localhost', 12345))
+                s_emisor.sendall(message.encode())
+            else:
+                s_emisor.connect(('localhost', 12346))
+                s_emisor.sendall(message.encode())
+
+        resultado = recibir_resultado()
+        print(f"Resultado recibido: {resultado}")
+
+        continuar = input("¿Desea enviar otro mensaje? (s/n): ")
+        if continuar.lower() != 's':
+            break
 
 if __name__ == "__main__":
     main()

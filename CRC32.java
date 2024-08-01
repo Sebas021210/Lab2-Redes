@@ -18,38 +18,39 @@ public class CRC32 {
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(12347)) {
             System.out.println("\nEsperando conexión...");
-            Socket socket = serverSocket.accept();
-            System.out.println("Conexión establecida.");
+            while (true){
+                Socket socket = serverSocket.accept();
+                System.out.println("Conexión establecida.");
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String noisyMessage = in.readLine();
-            
-            String message = noisyMessage.substring(0, noisyMessage.length() - 32);
-            String crc = noisyMessage.substring(noisyMessage.length() - 32);
-            byte[] messageBytes = new byte[message.length() / 8];
-            
-            for (int i = 0; i < message.length(); i += 8) {
-                messageBytes[i / 8] = (byte) Integer.parseInt(message.substring(i, i + 8), 2);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String noisyMessage = in.readLine();
+                
+                String message = noisyMessage.substring(0, noisyMessage.length() - 32);
+                String crc = noisyMessage.substring(noisyMessage.length() - 32);
+                byte[] messageBytes = new byte[message.length() / 8];
+                
+                for (int i = 0; i < message.length(); i += 8) {
+                    messageBytes[i / 8] = (byte) Integer.parseInt(message.substring(i, i + 8), 2);
+                }
+
+                System.out.println("\nMensaje recibido: " + message);
+                int calculatedCRC = calcularCRC32(messageBytes);
+                String resultado;
+
+                if (calculatedCRC == Integer.parseUnsignedInt(crc, 2)) {
+                    String decodedMessage = decodificarMensaje(message);
+                    resultado = "El mensaje recibido es correcto. Mensaje: " + decodedMessage;
+                    System.out.println("Mensaje decodificado: " + decodedMessage);
+                } else {
+                    resultado = "El mensaje recibido es incorrecto: Se detectaron errores.";
+                }
+                
+                try (Socket mainSocket = new Socket("localhost", 12348);
+                    PrintWriter out = new PrintWriter(mainSocket.getOutputStream(), true)) {
+                    System.out.println("Enviando resultado...");
+                    out.println(resultado);
+                }
             }
-
-            System.out.println("\nMensaje recibido: " + message);
-            int calculatedCRC = calcularCRC32(messageBytes);
-            String resultado;
-
-            if (calculatedCRC == Integer.parseUnsignedInt(crc, 2)) {
-                String decodedMessage = decodificarMensaje(message);
-                resultado = "El mensaje recibido es correcto. Mensaje: " + decodedMessage;
-                System.out.println("Mensaje decodificado: " + decodedMessage);
-            } else {
-                resultado = "El mensaje recibido es incorrecto: Se detectaron errores.";
-            }
-            
-            try (Socket mainSocket = new Socket("localhost", 12348);
-                 PrintWriter out = new PrintWriter(mainSocket.getOutputStream(), true)) {
-                System.out.println("Enviando resultado...");
-                out.println(resultado);
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
