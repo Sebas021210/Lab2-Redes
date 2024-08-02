@@ -11,7 +11,7 @@
 import java.io.*;
 import java.net.*;
 
-public class CRC32 {
+public class ReceptorCRC32 {
     private static final int POLY = 0xEDB88320;
     private static final int CRC = 0xFFFFFFFF;
 

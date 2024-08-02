@@ -52,7 +52,7 @@ def main():
 
         time.sleep(1)
 
-    with open('resultados.json', 'w') as f:
+    with open('resultados-Hamming.json', 'w') as f:
         json.dump(resultados, f)
 
     print("Pruebas completadas y resultados guardados en resultados.json")

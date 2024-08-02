@@ -1,7 +1,7 @@
 import json
 import matplotlib.pyplot as plt
 
-def cargar_resultados(filepath='resultados.json'):
+def cargar_resultados(filepath='resultados-Hamming.json'):
     with open(filepath, 'r') as f:
         return json.load(f)
 
