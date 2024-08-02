@@ -16,7 +16,7 @@ def analizar_resultados(resultados):
         for letra in mensaje_original:
             if f"No se detectaron errores. {letra} " in resultado_procesado:
                 letras_correctas += 1
-            elif f"Error corregido en la posición" in resultado_procesado and f"{letra} " in resultado_procesado.split("Error corregido en la posición")[-1]:
+            elif f"Error corregido en la posici\u00f3n" in resultado_procesado and f"{letra} " in resultado_procesado.split("Error corregido en la posición")[-1]:
                 letras_correctas += 1
 
         if letras_correctas == len(mensaje_original):
@@ -34,7 +34,8 @@ def analizar_resultados(resultados):
     return tasa_exito, errores
 
 def graficar_resultados(resultados):
-    exitos = ["Correcto" if "No se detectaron errores" in r['resultado'] or "Error corregido en la posici\u00f3n" in r['resultado'] else "Error" for r in resultados]
+    exitos = ["Correcto" if "No se detectaron errores" in r['resultado'] else "Error" for r in resultados]
+    # Errores = ["Errores" if "Error corregido en la posici\u00f3n" in r['resultado'] else "Error" for r in resultados]
     longitudes = [r['longitud'] for r in resultados]
 
     plt.figure(figsize=(10, 6))
@@ -46,6 +47,7 @@ def graficar_resultados(resultados):
 
     plt.figure(figsize=(10, 6))
     plt.hist(exitos, color='green', alpha=0.7)
+    # plt.hist(Errores, color='red', alpha=0.7)
     plt.title('Resultados de Transmisión de Mensajes')
     plt.xlabel('Resultado')
     plt.ylabel('Frecuencia')
