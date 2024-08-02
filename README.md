@@ -15,7 +15,7 @@ Para la implementación del algoritmo de detección de errores, se utilizó CRC-
 ### Arquitectura de capas
 1. Ejecutar los receptores en Java:
     ```bash
-    java CRC32
+    java ReceptorCRC32
     ```
     ```bash
     java ReceptorHamming
@@ -37,10 +37,10 @@ Para la implementación del algoritmo de detección de errores, se utilizó CRC-
 ### Pruebas
 1. Ejecutar el receptor para la prueba en Java:
     ```bash
-    java CRC32
+    java ReceptorCRC32
     ```
     ```bash
-    java Emisor-Hamming
+    java ReceptorHamming
     ```
 2. Ejecutar el receptor para la prueba en Python:
     ```bash
@@ -49,16 +49,22 @@ Para la implementación del algoritmo de detección de errores, se utilizó CRC-
     ```bash
     python Emisor-Hamming.py
     ```
-3. Ejecutar Prueba:
+3. Ejecutar Prueba del algoritmo:
    ```bash
-   python Prueba.py
+   python Prueba-CRC32.py
+   ```
+   ```bash
+   python Prueba-Hamming.py
    ```
 
 ### Análisis
 1. Asegurarse de tener el archivo .json creado después de la prueba
-2. Ejecutar Análisis
+2. Ejecutar Análisis del algoritmo:
    ```bash
-   python Analisis.py
+   python Analisis-CRC32.py
+   ```
+   ```bash
+   python Analisis-Hamming.py
    ```
 
 ## Ejemplos de Entrada y Salida
